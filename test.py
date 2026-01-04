@@ -7,7 +7,7 @@ def verify_license(license_key):
     
     url = "http://localhost:3000/api/verify"
     payload = {
-        "secret_key": "fb03e310a4b8f7e6df913b24edf4decea4cb525f61c882b20a4c68c7b7a79e1c",
+        "secret_key": "your_app_secret_key_here",
         "license_key": license_key,
         "hwid": hwid
     }
@@ -16,7 +16,7 @@ def verify_license(license_key):
         response = requests.post(url, json=payload)
         data = response.json()
         
-        print(data)  # Debugging line to see the full response
+        print(data) 
         if data.get("success"):
             print("Access Granted!")
             return True
