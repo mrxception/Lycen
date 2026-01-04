@@ -1,0 +1,58 @@
+
+CREATE TABLE IF NOT EXISTS users (
+  id VARCHAR(255) PRIMARY KEY, 
+  name VARCHAR(255) NOT NULL,
+  email VARCHAR(255) UNIQUE NOT NULL,
+  password VARCHAR(255) NOT NULL,
+  role ENUM('admin', 'user') DEFAULT 'user',
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE IF NOT EXISTS applications (
+  id VARCHAR(255) PRIMARY KEY, 
+  owner_id VARCHAR(255) NOT NULL,
+  name VARCHAR(255) NOT NULL,
+  description TEXT,
+  secret_key VARCHAR(255) UNIQUE NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (owner_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS application_members (
+  id VARCHAR(255) PRIMARY KEY, 
+  application_id VARCHAR(255) NOT NULL,
+  user_id VARCHAR(255) NOT NULL,
+  added_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  UNIQUE(application_id, user_id),
+  FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS licenses (
+  id VARCHAR(255) PRIMARY KEY, 
+  application_id VARCHAR(255) NOT NULL,
+  license_key VARCHAR(255) UNIQUE NOT NULL,
+  hwid VARCHAR(255),
+  
+  duration_days INT DEFAULT 30,  
+  activated_at TIMESTAMP NULL,   
+  expires_at TIMESTAMP NULL,     
+  
+  is_active BOOLEAN DEFAULT TRUE, 
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+  last_used TIMESTAMP NULL,
+
+  FOREIGN KEY (application_id) REFERENCES applications(id) ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS sessions (
+  id VARCHAR(255) PRIMARY KEY,
+  user_id VARCHAR(255) NOT NULL, 
+  expires_at TIMESTAMP NOT NULL,
+  created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
