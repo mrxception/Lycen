@@ -65,7 +65,7 @@ def verify_license(license_key):
     # Get a unique hardware ID
     hwid = str(uuid.getnode())
     
-    url = "https://lycen.app/api/verify"
+    url = "https://mrx-lycen.vercel.app/api/verify"
     payload = {
         "secret_key": "YOUR_APP_SECRET",
         "license_key": license_key,
@@ -110,7 +110,7 @@ public class LycenClient {
             "application/json"
         );
 
-        var response = await client.PostAsync("https://lycen.app/api/verify", content);
+        var response = await client.PostAsync("https://mrx-lycen.vercel.app/api/verify", content);
         var json = await response.Content.ReadAsStringAsync();
         var result = JsonSerializer.Deserialize<LycenResponse>(json);
 
@@ -128,7 +128,7 @@ public class LycenResponse {
                 <TabsContent value="nodejs" className="mt-4">
                   <pre className="p-4 bg-zinc-950 text-zinc-50 rounded-lg text-xs overflow-x-auto leading-relaxed border border-zinc-800">
                     {`const verifyLicense = async (licenseKey) => {
-  const response = await fetch('https://lycen.app/api/verify', {
+  const response = await fetch('https://mrx-lycen.vercel.app/api/verify', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({
