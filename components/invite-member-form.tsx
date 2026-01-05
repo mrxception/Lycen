@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react" 
+import { useState, useRef } from "react"
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,50 +11,44 @@ import { Loader2 } from "lucide-react"
 export function InviteMemberForm({ appId }: { appId: string }) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
-  const formRef = useRef<HTMLFormElement>(null) 
+  const formRef = useRef<HTMLFormElement>(null)
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
-    try {
-      const result = await addTeamMember(appId, formData)
+    
+    const result = await addTeamMember(appId, formData)
 
-      if (result?.error) {
-        toast({
-          variant: "destructive",
-          title: "Invitation Failed",
-          description: result.error,
-        })
-      } else {
-        toast({
-          title: "Success",
-          description: "User has been added to the team.",
-          className: "bg-emerald-500 text-white border-emerald-600",
-        })
-        
-        formRef.current?.reset()
-      }
-    } catch (error) {
+    if (result?.error) {
       toast({
         variant: "destructive",
-        title: "Error",
-        description: "An unexpected error occurred.",
+        title: "Invitation Error",
+        description: String(result.error || "An unknown error occurred"),
+        className: "bg-red-600 text-white border-red-700",
       })
-    } finally {
-      setLoading(false)
+    } else if (result?.success) {
+      toast({
+        title: "Success",
+        description: "Member added successfully.",
+        className: "bg-emerald-500 text-white border-emerald-600",
+      })
+      formRef.current?.reset()
     }
+
+    setLoading(false)
   }
 
   return (
-    <form ref={formRef} action={handleSubmit} className="space-y-4">
+    <form 
+      ref={formRef} 
+      onSubmit={(e) => {
+        e.preventDefault()
+        handleSubmit(new FormData(e.currentTarget))
+      }} 
+      className="space-y-4"
+    >
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
-        <Input 
-          id="email" 
-          name="email" 
-          type="email" 
-          placeholder="colleague@example.com" 
-          required 
-        />
+        <Input id="email" name="email" type="email" placeholder="colleague@example.com" required />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? (
