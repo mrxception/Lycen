@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react" 
 import { useToast } from "@/components/ui/use-toast"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -11,6 +11,7 @@ import { Loader2 } from "lucide-react"
 export function InviteMemberForm({ appId }: { appId: string }) {
   const { toast } = useToast()
   const [loading, setLoading] = useState(false)
+  const formRef = useRef<HTMLFormElement>(null) 
 
   async function handleSubmit(formData: FormData) {
     setLoading(true)
@@ -20,25 +21,23 @@ export function InviteMemberForm({ appId }: { appId: string }) {
       if (result?.error) {
         toast({
           variant: "destructive",
-          title: "Error",
+          title: "Invitation Failed",
           description: result.error,
         })
       } else {
-        
         toast({
-          title: "Invitation Sent",
+          title: "Success",
           description: "User has been added to the team.",
           className: "bg-emerald-500 text-white border-emerald-600",
         })
         
-        const form = document.getElementById("invite-form") as HTMLFormElement
-        if (form) form.reset()
+        formRef.current?.reset()
       }
     } catch (error) {
       toast({
         variant: "destructive",
         title: "Error",
-        description: "Something went wrong.",
+        description: "An unexpected error occurred.",
       })
     } finally {
       setLoading(false)
@@ -46,10 +45,16 @@ export function InviteMemberForm({ appId }: { appId: string }) {
   }
 
   return (
-    <form id="invite-form" action={handleSubmit} className="space-y-4">
+    <form ref={formRef} action={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email Address</Label>
-        <Input id="email" name="email" type="email" placeholder="colleague@example.com" required />
+        <Input 
+          id="email" 
+          name="email" 
+          type="email" 
+          placeholder="colleague@example.com" 
+          required 
+        />
       </div>
       <Button type="submit" className="w-full" disabled={loading}>
         {loading ? (
